@@ -1,0 +1,163 @@
+body{
+	background: url("/images/board.jpg") no-repeat fixed center;
+	background-size: 100% 100%;
+	color: white;
+	margin: 0px;
+	font-size: 40px;
+    font-family: 'Caveat', cursive;
+    padding-bottom: 30px;
+}
+
+header{
+
+	width: 100%;
+	display: inline-block;
+/*
+	background: white;
+	border-bottom: 2px dashed black;
+	opacity: 0.5; */
+	
+	margin-top: 30px;
+	font-size: 40px;
+
+}
+
+.authorInfo {
+	display: inline-block;
+	width: 26%;
+	text-align: center;
+}
+
+#div_img {
+	margin-left:40px;
+	width: 75px;
+	height: 75px;
+	display: inline-block;
+}
+#id_for_choose{
+	border-bottom: 4px solid blue;
+}
+
+
+.chooseBox {
+	height: 40px;
+	width: 50%;
+	margin-left: 65px;
+	margin-top: 5px;
+
+	display: block;
+/*	background: white; 
+	border: 1px solid black;
+/*	opacity: 0.3;*/
+	cursor: pointer;
+}
+img {
+	float: left;
+}
+a {
+  color: white;
+  display: inline-block;
+  text-decoration: none;
+ /* text-transform: uppercase; */
+  letter-spacing: 1px;
+  font-size: 40px;
+  font-weight: bold;
+  font-family: 'Caveat', cursive;
+  transition: 0.4s ease-in-out;
+}
+
+h3 {
+	margin-top: 15px;
+	margin-bottom: 15px;
+	text-align: center;
+}
+
+h4 {
+	margin-top: 15px;
+	margin-bottom: 15px;
+	text-align: left;
+	margin-left: 50px;
+}
+
+#input-line {
+	display: inline-block;
+}
+
+table {
+	font-size: 25px;
+	margin-left: 65px;
+	text-align: center;
+	border-collapse: collapse;
+}
+
+table th {
+	font-size: 27px;
+}
+
+table td {
+	padding: 3px;
+	border: 1px solid white;
+}
+
+#div_table_ocenka td {
+	padding: 10px;
+}
+
+input {
+	margin-left: 65px;
+}
+
+input[type="text"] {
+   border: 1px solid #cccccc;
+   border-radius: 3px;
+   background: #ffffff !important; 
+   outline: none;
+   height: 30px; 
+   width: 270px; 
+   color: black; 
+   font-size: 25px; 
+   font-family: 'Caveat', cursive;
+
+}
+input[type="button"] {
+  background-color: #4CAF50;
+  border: none;
+  color: white;
+  padding: 16px 32px;
+  text-decoration: none;
+  margin-left: 65px;
+  cursor: pointer;
+}
+
+.form-popup {
+	dispay: none;
+}
+
+#table1 input {
+	margin-left: 0px;
+}
+
+button{
+  background-color: #FFFFFF;
+    border: 1px solid #CCCCCC;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+    transition: border 0.2s linear 0s, box-shadow 0.2s linear 0s;
+        border-radius: 4px;
+    color: #555555;
+    display:block;
+        width:120px;
+        margin: 20px auto;
+    font-size: 14px;
+        text-align:center;
+    height: 20px;
+    line-height: 20px;
+    margin-bottom: 10px;
+    padding: 4px 6px;
+    vertical-align: middle;
+        text-decoration:none;
+}
+button:hover, button:focus {
+   border-color: rgba(82, 168, 236, 0.8);
+   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(82, 168, 236, 0.6);
+   outline: 0 none;
+}

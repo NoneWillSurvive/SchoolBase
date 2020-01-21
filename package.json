@@ -1,0 +1,19 @@
+{
+  "name": "oop-kyrsach",
+  "version": "1.0.0",
+  "description": "oop-kyrsach",
+  "main": "server.js",
+  "dependencies": {
+    "express": "^4.17.1",
+    "html-pdf": "^2.2.0",
+    "log4js": "^6.1.0",
+    "pg": "^7.12.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "kirill bogdanov",
+  "license": "ISC"
+}

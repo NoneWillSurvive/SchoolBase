@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<title>Практика</title>
+	<link rel="stylesheet" type="text/css" href="/styles/style.css">
+
+	<link href="https://fonts.googleapis.com/css?family=Caveat&amp;display=swap" rel="stylesheet">
+
+	
+	
+</head>
+
+<body>
+
+	<header>
+		
+		<div id = "div_img">
+			<a href = "/">
+				<img src="/images/kek.png"  width="75" height="75" alt="Школьное образование">
+			</a>
+		</div>
+		<div class = "authorInfo" id = "id_for_choose">
+			<a href = "/baseTeacher"> База учителей </a>
+		</div>
+		<div class = "authorInfo">
+			<a href = "/baseStudent"> База учеников </a>
+		</div>
+		<div class = "authorInfo">
+			<a href = "/baseStat"> Статистика </a>
+		</div>
+		
+	</header>
+
+
+
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+	<script>
+		$(function(){
+
+
+			var cleck = 0;
+
+			$("body").append('<h3>Выберете, какую информацию необходимо получить</h3>');
+			$("body").append('<div class = "chooseBox" id = "chooseOne">Найти преподавателя</div>');
+			$("body").append('<div class = "chooseBox" id = "chooseTwo">Показать руководительский состав</div>');
+			$("body").append('<div class = "chooseBox" id = "chooseThree">Редактировать данные об учителе</div>');
+			$("body").append('<div class = "chooseBox" id = "chooseFour">Показать расписание учителя</div>');
+			$("body").append('<div class = "chooseBox" id = "chooseFive">Добавить урок в расписание</div>');
+			$("body").append('<div class = "chooseBox" id = "chooseSix">Добавить учителя</div>');	
+			$("body").append('<div class = "chooseBox" id = "chooseSeven">Удалить учителя</div>');
+
+			class Teacher {
+				constructor(teach_id, name, sec_name, child_class, subject){
+					this.name = name;
+					this.sec_name = sec_name;
+					this.child_class = child_class;
+					this.subject = subject;
+					this.teach_id = teach_id;
+				}
+
+				get All_info() {
+					return `${this.teach_id} ${this.name} ${this.sec_name} ${this.child_class} ${this.subject}`;
+				}
+
+				set All_info(newValue) {
+					[this.teach_id, this.name, this.sec_name, this.child_class, this.subject] = newValue.split(' ');
+				}
+
+			}	
+
+			class Timetable {
+				constructor(teach_id, subject, day, numb_lesson, graduate){
+					this.teach_id = teach_id;
+					this.subject = subject;
+					this.day = day;
+					this.numb_lesson = numb_lesson;
+					this.graduate = graduate;
+				}
+
+				get All_info() {
+					return `${this.teach_id} ${this.subject} ${this.day} ${this.numb_lesson} ${this.graduate}`;
+				}
+
+				set All_info(newValue) {
+					[this.teach_id, this.subject, this.day, this.numb_lesson, this.graduate] = newValue.split(' ');
+				}
+
+			}
+
+
+			var arrayTeacher = [];
+			var arrayTimetable = [];
+
+			$("#chooseOne").click(() => {
+				if(cleck != 0){
+					return;
+				}
+			// считываем фамилию препода.
+			$("body").append('<div class = "class_input"><input id="text" type="text" name="form-text" placeholder = "Введите фамилию или ID">');
+			$("body").append('<input type = "button" id="submit" value="Отправить"></div>');
+			$("#submit").click(() => {
+
+				value = $("#text").val();
+				alert(typeof(value));
+				$.post("/take_teacher_bySecName", {val:value}, (data) =>{
+					if(data.length == 0){
+						$("body").append('<div class = "chooseBox">Учитель не найден!</div>');
+						return;
+					}
+					for(let i = 0; data.length > i; i++)
+					{
+						arrayTeacher.push(new Teacher(data[i]['teach_id'], data[i]['name'], data[i]['sec_name'], data[i]['child_class'], data[i]['subject']));
+					}
+					$("body").append('</p><div id = "div_table"></div>');
+					
+					//content += `<tr><td rowspan="5"><img src="/images/${sec_name}.jpg"  width="75" height="75"</td></tr>`;
+					let content='';
+					arrayTeacher.forEach(function(element) {
+						content += "<table>";
+						content += `<tr><td rowspan="5"><img src="/images/${element['teach_id']}.jpg"  width="150" height="150"></td></tr>`;
+
+						for(let ik in element){
+							if(ik == 'child_class')
+								content += `<tr><td>Класс №${element[ik]}</td></tr>`;
+							if(ik != 'teach_id' && ik != 'child_class')
+								content += `<tr><td>${element[ik]}</td></tr>`;
+						}
+						
+
+						content += '</table></p>';
+
+					});
+
+					console.log(`${content}`);
+					$("#div_table").append(content);
+					$("body").append('<footer></p></p></p></footer>');
+
+				});
+
+
+				for(let i = 0; i < arrayTeacher.length; i++){
+					arrayTeacher.pop();
+					i--;
+				}
+			});
+
+
+
+			cleck = 1;
+		});
+
+		//выбираем второй див
+		$("#chooseTwo").click(() => {
+
+			// если клик был не первый раз - нужно удалить созданные таблицы и прочее
+			// ПОКА СТОИТ РЕТУРН
+			if(cleck != 0){
+				return;
+			}
+
+	   		$.post("/take_all_teachers", function(data){ // параметр data = res.send(..);   
+	   			console.log(`Приняли: ${data}`); 
+
+				//console.log(`TUT: ${data[0].name}`);
+				//присваиваем полученные данные с таблиц - классам. 
+				//Чтобы обрабатывать классы, а не делать запросы
+
+				for(let i = 0; data.length > i; i++)
+				{
+					arrayTeacher.push(new Teacher(data[i]['teach_id'], data[i]['name'], data[i]['sec_name'], data[i]['child_class'], data[i]['subject']));
+
+				}
+					// работаем с учителями.
+					// element - один учитель.
+					// обращаться с полям класс через element['поле']
+					$("body").append('</p><div id = "div_table"></div>');
+					let content = "<table><tr><th>Имя</th><th>Фамилия</th><th>Руководимый класс</th><th>Предмет</th></tr>";
+
+					arrayTeacher.forEach(function(element) {
+						content += '<tr>';
+						for(let ik in element){
+						//console.log(`${ik} + ${element[ik]}`);
+						if(ik != 'teach_id'){
+							content += `<td>${element[ik]}</td>`;
+						}
+
+					}
+					content += '</tr>';
+					//console.log(`${element['All_info']}`);
+
+				});
+
+					$("body").append('<div class = "class_input">');
+					$("body").append('<a href = "/genPdf"><input type = "button" id="submit_pdf" value="Скачать PDF"></div></a>');
+//					$("#submit_pdf").click(() => {
+//						data = JSON.stringify(data);
+//						$.get("/genPdf", function(data){});
+//					});
+
+
+					$("#div_table").append(content);
+					$("body").append('<footer></p></p></p></footer>');
+				});		
+
+	   		cleck = 1;
+	   	}); 
+
+
+		$("#chooseThree").click(() => {
+			if(cleck != 0){
+				return;
+			}
+
+			$("body").append('<div class = "class_input"><input id="text" type="text" name="form-text" placeholder = "Введите ID">');
+			$("body").append('<input type = "button" id="submit" value="Отправить"></div>');
+			$("#submit").click(() => {
+
+				value = $("#text").val();
+				
+				$.post("/take_teacher_bySecName", {val:value}, (data) =>{
+					if(data.length == 0){
+						$("body").append('<div class = "chooseBox">Учитель не найден!</div>');
+						return;
+					}
+
+
+					$("body").append(`<form method="post" id="myform"></form>
+						<table id="table1"> 
+						<tr>
+						<td>Индекс</td>
+						<td>Фамилия</td>
+						<td>Имя</td>
+						<td>Ведомый класс</td>
+						<td>Предмет</td>
+						</tr>
+						<tr> 
+
+						<td>
+						${data[0]['teach_id']}
+						</td>
+
+						<td>
+						<input id="inp_sec_name" type="text" name="sec_name" value= "${data[0]['sec_name']}"" form="myform">
+						</td>
+						<td> 
+						<input id="inp_name" type="text" name="name" value="${data[0]['name']}" form="myform"> 
+						</td>
+						<td> 
+						<input id="inp_child_class" type="text" name="child_class" value="${data[0]['child_class']}" form="myform"> 
+						</td>
+						<td> 
+						<input id="inp_subject" type="text" name="subject" value="${data[0]['subject']}" form="myform">
+						</td>
+						</tr> 
+
+						</table>
+						<input type = "button" id="submit1" value="Отправить" form="myform">
+						`);
+
+
+
+					$("#submit1").click( () => {
+						let sec_name = $("#inp_sec_name").val();
+						let name = $("#inp_name").val();
+						let child_class = $("#inp_child_class").val();
+						let subject = $("#inp_subject").val();
+						let teach_id = data[0]['teach_id'];
+						$.post("/redact_teacher", {teach_id:teach_id, sec_name:sec_name, name:name, child_class:child_class, subject:subject}, (data) =>{
+							alert(data);
+						});
+
+					});
+				});
+				
+				$("body").append('<footer></p></p></p></footer>');
+
+			});
+
+
+			for(let i = 0; i < arrayTeacher.length; i++){
+				arrayTeacher.pop();
+				i--;
+			}
+			
+			cleck = 1;
+		});
+
+		$("#chooseFour").click(() => {			
+			if(cleck != 0){
+				return;
+			}
+			$("body").append('<div class = "class_input"><input id="text" type="text" name="form-text" placeholder = "Введите ID">');
+			$("body").append('<input type = "button" id="submit" value="Отправить"></div>');
+			$("#submit").click(() => {
+
+				value = $("#text").val();
+				$.post("/timetable_byID", {val:value}, (data) =>{
+				if(data.length == 0){
+					$("body").append(`<div class = "chooseBox">Расписания учителя с ID ${value} не найдено!</div>`);
+					return;
+				}
+				for(let i = 0; data.length > i; i++)
+				{
+					arrayTimetable.push(new Timetable(data[i]['teach_id'], data[i]['subject'], data[i]['day'], data[i]['numb_lesson'], data[i]['graduate']));
+				}
+				$("body").append('</p><div id = "div_table_timetable"></div>');
+
+					//content += `<tr><td rowspan="5"><img src="/images/${sec_name}.jpg"  width="75" height="75"</td></tr>`;
+					let content_timetable="<table><tr><th>Предмет</th><th>День</th><th>Номер урока</th><th>Класс</th></tr>";
+					arrayTimetable.forEach(function(element) {
+						content_timetable += "<tr>";
+						for(let ik in element){
+							if(ik != 'teach_id')
+								content_timetable += `<td>${element[ik]}</td>`;
+						}
+						content_timetable += "</tr>";
+					});
+					content_timetable += '</table></p>';
+					$("#div_table_timetable").append(content_timetable);
+
+					console.log(`${content}`);
+					$("#div_table").append(content);
+					$("body").append('<footer></p></p></p></footer>');
+				});
+			});
+		});
+		// добавить урок
+		$("#chooseFive").click(() => {
+			if(cleck != 0){
+				return;
+			}
+
+			$("body").append('<div class = "class_input"><input id="text1" type="text" name="form-text" placeholder = "ID"></div>');
+			$("body").append('<div class = "class_input"><input id="text2" type="text" name="form-text" placeholder = "Предмет"></div>');
+			$("body").append('<div class = "class_input"><input id="text3" type="text" name="form-text" placeholder = "День"></div>');
+			$("body").append('<div class = "class_input"><input id="text4" type="text" name="form-text" placeholder = "Номер урока"></div>');
+			$("body").append('<div class = "class_input"><input id="text5" type="text" name="form-text" placeholder = "Класс"></div>');
+			$("body").append('<div class = "class_input"><input type = "button" id="submit" value="Отправить"></div>');
+			$("#submit").click(() => {
+				let id = $("#text1").val();
+				let subject = $("#text2").val();
+				let day = $("#text3").val();
+				let numb_lesson = $("#text4").val();
+				let graduate = $("#text5").val();
+				$.post("/add_timetable", {id:id, subject:subject, day:day, numb_lesson:numb_lesson, graduate:graduate}, (data) =>{
+					alert(data);
+				});
+			});
+		});
+
+		$("#chooseSix").click(() => {
+			if(cleck != 0){
+				return;
+			}
+
+			$("body").append('<div class = "class_input"><input id="text1" type="text" name="form-text" placeholder = "Фамилия"></div>');
+			$("body").append('<div class = "class_input"><input id="text2" type="text" name="form-text" placeholder = "Имя"></div>');
+			$("body").append('<div class = "class_input"><input id="text3" type="text" name="form-text" placeholder = "Руководимый Класс"></div>');
+			$("body").append('<div class = "class_input"><input id="text4" type="text" name="form-text" placeholder = "Основной предмет"></div>');
+			$("body").append('<div class = "class_input"><input type = "button" id="submit" value="Отправить"></div>');
+			$("#submit").click(() => {
+				let sec_name = $("#text1").val();
+				let name = $("#text2").val();
+				let child_class = $("#text3").val();
+				let subject = $("#text4").val();
+				$.post("/add_teacher", {sec_name:sec_name, name:name, child_class:child_class, subject:subject}, (data) =>{
+					alert(data);
+				});
+			});
+		});
+		$("#chooseSeven").click(() => {
+			if(cleck != 0){
+				return;
+			}
+
+			$("body").append('<div class = "class_input"><input id="text1" type="text" name="form-text" placeholder = "Введите ID"></div>');
+			$("body").append('<input type = "button" id="submit" value="Отправить"></div>');
+			$("#submit").click(() => {
+
+				if (confirm("Удалить учителя?")) {
+					
+					let val = $("#text1").val();
+					$.post("/delete_teacher", {val:val}, (data) =>{
+						alert(data);
+					});
+					
+				} else {
+					alert("Учитель НЕ БЫЛ удален");
+				}
+
+			});
+		});
+});
+
+
+
+		</script>
+
+
+	</body>
+
+
+
+	</html>

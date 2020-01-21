@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<title>Практика</title>
+	<link rel="stylesheet" type="text/css" href="/styles/style.css">
+
+	<link href="https://fonts.googleapis.com/css?family=Caveat&amp;display=swap" rel="stylesheet">
+
+	
+	
+</head>
+
+<body>
+
+	<header>
+		
+			<div id = "div_img">
+				<a href = "/">
+					<img src="/images/kek.png"  width="75" height="75" alt="Школьное образование">
+				</a>
+			</div>
+			<div class = "authorInfo">
+				<a href = "/baseTeacher"> База учителей </a>
+			</div>
+			<div class = "authorInfo">
+				<a href = "/baseStudent"> База учеников </a>
+			</div>
+			<div class = "authorInfo" id = "id_for_choose">
+				<a href = "/baseStat"> Статистика </a>
+			</div>
+		
+	</header>
+
+<h3>Общая информация о школе</h3>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script>
+
+$(function(){
+	
+
+	var cleck = 0;
+	let content = `<h4>Количество учеников в школе: `;
+
+	$.post("/count_stud", (data) =>{
+		content+= `${data[0]['count']} </h4>`;
+		$("body").append(content);
+	});
+
+	let content1 = `<h4>Количество учителей в школе: `;
+	$.post("/count_teach", (data) =>{
+		content1+= `${data[0]['count']} </h4>`;
+		$("body").append(content1);
+	});	
+
+//	$("body").append('<div class = "chooseBox" id = "chooseOne">Информация об ученике и оценке</div>');
+//	$("body").append('<div class = "chooseBox" id = "chooseTwo">Список учеников в классе</div>');
+//	$("body").append('<div class = "chooseBox" id = "chooseThree">Редактировать данные об ученике</div>');
+//	$("body").append('<div class = "chooseBox" id = "chooseFour">Редактировать данные об оценках</div>');
+
+});
+</script>

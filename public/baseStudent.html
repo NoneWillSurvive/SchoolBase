@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<title>Практика</title>
+	<link rel="stylesheet" type="text/css" href="/styles/style.css">
+
+	<link href="https://fonts.googleapis.com/css?family=Caveat&amp;display=swap" rel="stylesheet">
+
+	
+	
+</head>
+
+<body>
+
+	<header>
+		
+		<div id = "div_img">
+			<a href = "/">
+				<img src="/images/kek.png"  width="75" height="75" alt="Школьное образование">
+			</a>
+		</div>
+		<div class = "authorInfo">
+			<a href = "/baseTeacher"> База учителей </a>
+		</div>
+		<div class = "authorInfo" id = "id_for_choose">
+			<a href = "/baseStudent"> База учеников </a>
+		</div>
+		<div class = "authorInfo">
+			<a href = "/baseStat"> Статистика </a>
+		</div>
+		
+	</header>
+
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+	<script>
+		$(function(){
+			
+
+			var cleck = 0;
+
+			$("body").append('<h3>Выберете, какую информацию необходимо получить</h3>');
+			$("body").append('<div class = "chooseBox" id = "chooseOne">Информация об ученике и оценках</div>');
+			$("body").append('<div class = "chooseBox" id = "chooseTwo">Список учеников в классе</div>');
+			$("body").append('<div class = "chooseBox" id = "chooseThree">Редактировать данные об ученике</div>');
+			$("body").append('<div class = "chooseBox" id = "chooseFour">Редактировать данные об оценках</div>');
+			$("body").append('<div class = "chooseBox" id = "chooseFive">Добавить оценку ученику</div>');
+			$("body").append('<div class = "chooseBox" id = "chooseSix">Добавить ученика</div>');
+			$("body").append('<div class = "chooseBox" id = "chooseSeven">Удалить ученика</div>');
+			$("body").append('<div class = "chooseBox" id = "chooseEight">Добавить класс</div>');
+
+			class Student {
+				constructor(stud_id, name, sec_name, graduate){
+					this.name = name;
+					this.sec_name = sec_name;
+					this.graduate = graduate;
+					this.stud_id = stud_id;
+				}
+
+				get All_info() {
+					return `${this.stud_id} ${this.name} ${this.sec_name} ${this.graduate}`;
+				}
+
+				set All_info(newValue) {
+					[this.stud_id, this.name, this.sec_name, this.graduate] = newValue.split(' ');
+				}
+
+			}
+
+			class Ocenka {
+				constructor(id, subject, ocenka){
+					this.id = id;
+					this.subject = subject;
+					this.ocenka = ocenka;
+				}
+
+				get All_info() {
+					return `${this.id} ${this.subject} ${this.ocenka}`;
+				}
+
+				set All_info(newValue) {
+					[this.id, this.subject, this.ocenka] = newValue.split(' ');
+				}
+
+			}			
+
+			var arrayStudent = [];
+			var arrayOcenka = [];
+
+			$("#chooseOne").click(() => {
+				if(cleck != 0){
+					return;
+				}
+			// считываем фамилию препода.
+			$("body").append('<div class = "class_input"><input id="text" type="text" name="form-text" placeholder = "Введите ID">');
+			$("body").append('<input type = "button" id="submit" value="Отправить"></div>');
+			$("#submit").click(() => {
+
+				value = $("#text").val();
+				//alert(typeof(value));
+				$.post("/take_student_byID", {val:value}, (data) =>{
+					if(data.length == 0){
+						$("body").append('<div class = "chooseBox">Ученик не найден!</div>');
+						return;
+					}
+
+					for(let i = 0; data.length > i; i++)
+					{
+						arrayStudent.push(new Student(data[i]['stud_id'], data[i]['name'], data[i]['sec_name'], data[i]['graduate']));
+					}
+
+
+
+					$("body").append('</p><div id = "div_table"></div>');
+					
+					//content += `<tr><td rowspan="5"><img src="/images/${sec_name}.jpg"  width="75" height="75"</td></tr>`;
+					let content='';
+					arrayStudent.forEach(function(element) {
+						content += "<table>";
+						content += `<tr><td rowspan="5"><img src="/images/11.jpg"  width="150" height="150"></td></tr>`;
+
+						for(let ik in element){
+							if(ik == 'graduate')
+								content += `<tr><td>Класс № ${element[ik]}</td></tr>`;
+							if(ik != 'stud_id' && ik != 'graduate')
+								content += `<tr><td>${element[ik]}</td></tr>`;
+						}
+						
+
+						content += '</table></p>';
+
+					});
+					
+					console.log(`${content}`);
+					$("#div_table").append(content);
+
+
+				});
+
+				$.post("/take_ocenki", {val:value}, (data) =>{
+					
+					if(data.length == 0){
+						$("body").append(`<div class = "chooseBox">Оценок ученика с ID ${value} не найдено!</div>`);
+						return;
+					}
+					for(let i = 0; data.length > i; i++)
+					{
+						arrayOcenka.push(new Ocenka(data[i]['id'], data[i]['subject'], data[i]['ocenka']));
+					}
+					$("body").append('</p><div id = "div_table_ocenka"></div>');
+					
+					//content += `<tr><td rowspan="5"><img src="/images/${sec_name}.jpg"  width="75" height="75"</td></tr>`;
+					let content_ocenka="<table><tr><th>Предмет</th><th>Оценка</th></tr>";
+					arrayOcenka.forEach(function(element) {
+						content_ocenka += "<tr>";
+						for(let ik in element){
+							if(ik != 'id')
+								content_ocenka += `<td>${element[ik]}</td>`;
+						}
+						content_ocenka += "</tr>";
+					});
+					content_ocenka += '</table></p>';
+					$("#div_table_ocenka").append(content_ocenka);
+				});
+
+
+				$("body").append('<footer></p></p></p></footer>');
+
+				for(let i = 0; i < arrayStudent.length; i++){
+					arrayStudent.pop();
+					i--;
+				}
+			});
+
+
+			cleck = 1;
+		});
+
+		//выбираем второй див
+		$("#chooseTwo").click(() => {
+
+			// если клик был не первый раз - нужно удалить созданные таблицы и прочее
+			// ПОКА СТОИТ РЕТУРН
+			if(cleck != 0){
+				return;
+			}
+			$("body").append('<div class = "class_input"><input id="text" type="text" name="form-text" placeholder = "Введите класс">');
+			$("body").append('<input type = "button" id="submit" value="Отправить"></div>');
+			$("#submit").click(() => {
+
+				value = $("#text").val();
+
+	   		$.post("/take_students_byClass", {val:value}, function(data){ // параметр data = res.send(..);   
+	   			console.log(`Приняли: ${data}`); 
+
+				//console.log(`TUT: ${data[0].name}`);
+				//присваиваем полученные данные с таблиц - классам. 
+				//Чтобы обрабатывать классы, а не делать запросы
+
+				for(let i = 0; data.length > i; i++)
+				{
+					arrayStudent.push(new Student(data[i]['stud_id'], data[i]['name'], data[i]['sec_name'], data[i]['graduate']));
+				}
+					// работаем с учителями.
+					// element - один учитель.
+					// обращаться с полям класс через element['поле']
+					$("body").append('</p><div id = "div_table"></div>');
+					let content = "<table><tr><th>Имя</th><th>Фамилия</th><th>Класс</th></tr>";
+
+					arrayStudent.forEach(function(element) {
+						content += '<tr>';
+						for(let ik in element){
+						//console.log(`${ik} + ${element[ik]}`);
+						if(ik != 'stud_id'){
+							content += `<td>${element[ik]}</td>`;
+						}
+
+					}
+					content += '</tr>';
+					//console.log(`${element['All_info']}`);
+
+				});
+					$("#div_table").append(content);
+					$("body").append('<footer></p></p></p></footer>');
+				});		
+	   	});
+			cleck = 1;
+		}); 
+
+
+		$("#chooseThree").click(() => {
+			if(cleck != 0){
+				return;
+			}
+
+			$("body").append('<div class = "class_input"><input id="text" type="text" name="form-text" placeholder = "Введите ID">');
+			$("body").append('<input type = "button" id="submit" value="Отправить"></div>');
+			$("#submit").click(() => {
+
+				value = $("#text").val();
+				
+				$.post("/take_student_byID", {val:value}, (data) =>{
+					if(data.length == 0){
+						$("body").append('<div class = "chooseBox">Ученик не найден!</div>');
+						return;
+					}
+
+
+					$("body").append(`<form method="post" id="myform"></form>
+						<table id="table1"> 
+						<tr>
+						<td>Индекс</td>
+						<td>Фамилия</td>
+						<td>Имя</td>
+						<td>Класс</td>
+						</tr>
+						<tr> 
+
+						<td>
+						${data[0]['stud_id']}
+						</td>
+
+						<td>
+						<input id="inp_sec_name" type="text" name="sec_name" value= "${data[0]['sec_name']}"" form="myform">
+						</td>
+						<td> 
+						<input id="inp_name" type="text" name="name" value="${data[0]['name']}" form="myform"> 
+						</td>
+						<td> 
+						<input id="inp_child_class" type="text" name="child_class" value="${data[0]['graduate']}" form="myform"> 
+						</td>
+						</tr> 
+						
+						</table>
+						<input type = "button" id="submit1" value="Отправить" form="myform">
+						`);
+
+
+
+					$("#submit1").click( () => {
+						let sec_name = $("#inp_sec_name").val();
+						let name = $("#inp_name").val();
+						let child_class = $("#inp_child_class").val();
+						let subject = $("#inp_subject").val();
+						let stud_id = data[0]['stud_id'];
+						$.post("/redact_student", {stud_id:stud_id, sec_name:sec_name, name:name, child_class:child_class, subject:subject}, (data) =>{
+							alert(data);
+						});
+
+					});
+				});
+				
+				$("body").append('<footer></p></p></p></footer>');
+
+			});
+
+
+			for(let i = 0; i < arrayStudent.length; i++){
+				arrayStudent.pop();
+				i--;
+			}
+			
+			cleck = 1;
+		});
+
+
+		$("#chooseFour").click(() => {
+			if(cleck != 0){
+				return;
+			}
+
+			$("body").append('<div class = "class_input"><input id="text" type="text" name="form-text" placeholder = "Введите ID">');
+			$("body").append('<input type = "button" id="submit" value="Отправить"></div>');
+			$("#submit").click(() => {
+				val = $("#text").val();
+				$.post("/take_ocenki", {val:val}, (data) =>{
+					
+					if(data.length == 0){
+						$("body").append(`<div class = "chooseBox">Оценок ученика с ID ${val} не найдено!</div>`);
+						return;
+					}
+					for(let i = 0; data.length > i; i++)
+					{
+						arrayOcenka.push(new Ocenka(data[i]['id'], data[i]['subject'], data[i]['ocenka']));
+					}
+					$("body").append('</p><div id = "div_table_ocenka"></div>');
+					
+					let content_ocenka=`<form method="post" id="myform"></form> 
+
+					<table id="table1"><tr><td>Предмет</td><td>Оценка</td></tr>`;
+					let i = 0;
+					arrayOcenka.forEach(function(element) {
+
+						content_ocenka += `<tr> 
+						<td>
+						<input id="inp_subject${i}" type="text" name="subject" value= "${element['subject']}" form="myform">
+						</td> 
+
+						<td>
+						<input id="inp_ocenka${i}" type="text" name="ocenka" value= "${element['ocenka']}" form="myform">
+						</td> 											
+						</tr>`;
+						i++;
+					});
+					content_ocenka += `</table> <input type = "button" id="submit1" value="Отправить" form="myform">`;
+
+
+					$("#div_table_ocenka").append(content_ocenka);
+
+/*					$("#submit1").click( () => {
+						array=[];
+						for(i; i>0; i--)
+						{
+							let subject = $("#inp_sec_name").val();
+							let ocenka = $("#inp_name").val();
+							let child_class = $("#inp_child_class").val();
+							let subject = $("#inp_subject").val();
+							let stud_id = data[0]['stud_id'];
+						}
+					$.post("/redact_student", {stud_id:stud_id, sec_name:sec_name, name:name, child_class:child_class, subject:subject}, (data) =>{
+						alert(data);
+					});
+
+				});*/
+			});	
+			});	
+			$("body").append('<footer></p></p></p></footer>');	
+		});
+
+
+		$("#chooseFive").click(() => {
+			if(cleck != 0){
+				return;
+			}
+
+			$("body").append('<div class = "class_input"><input id="text1" type="text" name="form-text" placeholder = "Введите ID"></div>');
+			$("body").append('<div class = "class_input"><input id="text2" type="text" name="form-text" placeholder = "Введите предмет"></div>');
+			$("body").append('<div class = "class_input"><input id="text3" type="text" name="form-text" placeholder = "Введите оценку"></div>');
+			$("body").append('<div class = "class_input"><input type = "button" id="submit" value="Отправить"></div>');
+			$("#submit").click(() => {
+				let id = $("#text1").val();
+				let subject = $("#text2").val();
+				let ocenka = $("#text3").val();
+				$.post("/add_ocenka", {id:id, subject:subject, ocenka:ocenka}, (data) =>{
+					alert(data);
+				});
+			});
+		});
+
+		$("#chooseSix").click(() => {
+			if(cleck != 0){
+				return;
+			}
+
+			$("body").append('<div class = "class_input"><input id="text1" type="text" name="form-text" placeholder = "Введите класс"></div>');
+			$("body").append('<div class = "class_input"><input id="text2" type="text" name="form-text" placeholder = "Введите фамилию"></div>');
+			$("body").append('<div class = "class_input"><input id="text3" type="text" name="form-text" placeholder = "Введите имя"></div>');
+			$("body").append('<div class = "class_input"><input type = "button" id="submit" value="Отправить"></div>');
+			$("#submit").click(() => {
+				let Tclass = $("#text1").val();
+				let sec_name = $("#text2").val();
+				let name = $("#text3").val();
+				$.post("/add_student", {Tclass:Tclass, sec_name:sec_name, name:name}, (data) =>{
+					alert(data);
+				});
+			});
+		});
+
+		$("#chooseSeven").click(() => {
+			if(cleck != 0){
+				return;
+			}
+
+			$("body").append('<div class = "class_input"><input id="text1" type="text" name="form-text" placeholder = "Введите ID"></div>');
+			$("body").append('<input type = "button" id="submit" value="Отправить"></div>');
+			$("#submit").click(() => {
+
+				if (confirm("Удалить ученика?")) {
+					
+					let val = $("#text1").val();
+					$.post("/delete_student", {val:val}, (data) =>{
+						alert(data);
+					});
+					
+				} else {
+					alert("Ученик НЕ БЫЛ удален");
+				}
+
+			});
+		});
+
+		$("#chooseEight").click(() => {
+			if(cleck != 0){
+				return;
+			}
+
+			$("body").append('<div class = "class_input"><input id="text1" type="text" name="form-text" placeholder = "Введите класс"></div>');
+			$("body").append('<div class = "class_input"><input type = "button" id="submit" value="Отправить"></div>');
+			$("#submit").click(() => {
+				let graduate = $("#text1").val();
+
+				$.post("/add_graduate", {graduate:graduate}, (data) =>{
+					alert(data);
+				});
+			});
+		});
+
+
+
+	});
+</script>
+
+
+</body>
+
+
+
+</html>

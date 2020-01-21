@@ -1,0 +1,77 @@
+________Учитель 1________
+teach_id: 1 
+name: Михаил 
+sec_name: Куприянов 
+child_class: 1 
+subject: Физика 
+
+________Учитель 2________
+teach_id: 2 
+name: Алла 
+sec_name: Андреева 
+child_class: 2 
+subject: Русский язык 
+
+________Учитель 3________
+teach_id: 3 
+name: Владимир 
+sec_name: Жандаров 
+child_class: 3 
+subject: Информатика 
+
+________Учитель 4________
+teach_id: 4 
+name: Ольга 
+sec_name: Жирнова 
+child_class: 4 
+subject: Литература 
+
+________Учитель 5________
+teach_id: 5 
+name: Игорь 
+sec_name: Зуев 
+child_class: 5 
+subject: История 
+
+________Учитель 6________
+teach_id: 7 
+name: Сергей 
+sec_name: Лебедев 
+child_class: 7 
+subject: Физкультура 
+
+________Учитель 7________
+teach_id: 8 
+name: Сергей 
+sec_name: Миронов 
+child_class: 8 
+subject: Обществознание 
+
+________Учитель 8________
+teach_id: 9 
+name: Сергей 
+sec_name: Павлов 
+child_class: 9 
+subject: Физкультура 
+
+________Учитель 9________
+teach_id: 10 
+name: Михаил 
+sec_name: Павловский 
+child_class: 10 
+subject: Русский язык 
+
+________Учитель 10________
+teach_id: 11 
+name: Юлия 
+sec_name: Перязева 
+child_class: 11 
+subject: Математика 
+
+________Учитель 11________
+teach_id: 6 
+name: Павел 
+sec_name: Колинько 
+child_class: 6 
+subject: Математика 
+
