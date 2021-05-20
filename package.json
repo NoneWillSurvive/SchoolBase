@@ -5,7 +5,7 @@
   "main": "server.js",
   "dependencies": {
     "express": "^4.17.1",
-    "html-pdf": "^2.2.0",
+    "html-pdf": "^3.0.1",
     "log4js": "^6.1.0",
     "pg": "^7.12.1"
   },
