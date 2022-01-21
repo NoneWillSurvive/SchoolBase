@@ -6,7 +6,7 @@
   "dependencies": {
     "express": "^4.17.1",
     "html-pdf": "^2.2.0",
-    "log4js": "^6.1.0",
+    "log4js": "^6.4.0",
     "pg": "^7.12.1"
   },
   "devDependencies": {},
